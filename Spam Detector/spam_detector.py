@@ -49,7 +49,6 @@ def number_of_hamEmails():
 
 
 def text_parser(text):
-    text = text.decode('windows-1252')
     words = re.split("[^a-zA-Z]", text)
     lower_words = [word.lower() for word in words if len(word) > 0]
 
@@ -66,7 +65,7 @@ def trainWord_generator():
         for filename in files:
             full_path = os.path.join(directories, filename)
             with open(full_path, 'rb') as target_file:
-                data = target_file.read()
+                data = target_file.read().decode('windows-1252')
                 words = text_parser(data)
                 for word in words:
                     all_words.append(word)
