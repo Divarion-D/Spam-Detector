@@ -18,7 +18,7 @@ test_path = "./test"
 def number_of_allEmails():
     counter = 0
     for directories, subdirectories, files in os.walk(train_path):
-        for filename in files:
+        for _ in files:
             counter += 1
 
     return counter
@@ -50,9 +50,7 @@ def number_of_hamEmails():
 
 def text_parser(text):
     words = re.split("[^a-zA-Z]", text)
-    lower_words = [word.lower() for word in words if len(word) > 0]
-
-    return lower_words
+    return [word.lower() for word in words if len(word) > 0]
 
 
 "*** Returns the words of train data: (all_trainWords, spam_trainWords, ham_trainWords) ***"
@@ -127,13 +125,13 @@ def bagOfWords_genarator(all_uniqueWords, spam_trainWords, ham_trainWords):
 
 
 def smoothed_bagOfWords(all_uniqueWords, spam_bagOfWords, ham_bagOfWords, delta):
-    smoothed_spamBOW = {}
-    smoothed_hamBOW = {}
+    smoothed_spamBOW = {
+        word: spam_bagOfWords[word] + delta for word in spam_bagOfWords.keys()
+    }
 
-    for word in spam_bagOfWords.keys():
-        smoothed_spamBOW[word] = spam_bagOfWords[word] + delta
-    for word in ham_bagOfWords.keys():
-        smoothed_hamBOW[word] = ham_bagOfWords[word] + delta
+    smoothed_hamBOW = {
+        word: ham_bagOfWords[word] + delta for word in ham_bagOfWords.keys()
+    }
 
     smoothed_spamBOW = dict(
         sorted(smoothed_spamBOW.items(), key=lambda item: item[0]))
@@ -189,11 +187,10 @@ def ham_condProbability(all_uniqueWords, ham_bagOfWords, smoothed_hamBOW, delta)
 
 
 def model_output_generator(word_numbers, words, ham_wf, ham_cp, spam_wf, spam_cp):
-    output = ""
-    for index in range(0, word_numbers):
-        output += f"{index + 1}  {words[index]}  {ham_wf[words[index]]}  {ham_cp[words[index]]}  {spam_wf[words[index]]}  {spam_cp[words[index]]}\n"
-
-    return output
+    return "".join(
+        f"{index + 1}  {words[index]}  {ham_wf[words[index]]}  {ham_cp[words[index]]}  {spam_wf[words[index]]}  {spam_cp[words[index]]}\n"
+        for index in range(word_numbers)
+    )
 
 
 "*** Builds model.txt file ***"
@@ -223,11 +220,7 @@ def get_actualLabels():
     actual_label = []
     for directories, subdirectories, files in os.walk(test_path):
         for filename in files:
-            if "ham" in filename:
-                actual_label += ["ham"]
-            else:
-                actual_label += ["spam"]
-
+            actual_label += ["ham"] if "ham" in filename else ["spam"]
     return actual_label
 
 
@@ -280,10 +273,10 @@ def score_calculator(all_uniqueWords, spam_prob, ham_prob, spam_condProb, ham_co
 
 
 def result_output_generator(fileNumbers, fileNames, predictedLabels, hamScores, spamScores, actualLabels, decisionLabels):
-    output = ""
-    for index in range(0, fileNumbers):
-        output += f"{index + 1}  {fileNames[index]}  {predictedLabels[index]}  {hamScores[index]}  {spamScores[index]}  {actualLabels[index]}  {decisionLabels[index]} \n"
-    return output
+    return "".join(
+        f"{index + 1}  {fileNames[index]}  {predictedLabels[index]}  {hamScores[index]}  {spamScores[index]}  {actualLabels[index]}  {decisionLabels[index]} \n"
+        for index in range(fileNumbers)
+    )
 
 
 "*** Builds result.txt file ***"
@@ -302,7 +295,7 @@ def get_spamPrecision(fileNumbers, actualLabels, predictedLabels):
     fp = 0
     precision = 0
 
-    for index in range(0, fileNumbers):
+    for index in range(fileNumbers):
         if(actualLabels[index] == "spam" and actualLabels[index] == predictedLabels[index]):
             tp += 1
         if(actualLabels[index] == "ham" and predictedLabels[index] == "spam"):
@@ -321,7 +314,7 @@ def get_spamRecall(fileNumbers, actualLabels, predictedLabels):
     fn = 0
     recall = 0
 
-    for index in range(0, fileNumbers):
+    for index in range(fileNumbers):
         if(actualLabels[index] == "spam" and actualLabels[index] == predictedLabels[index]):
             tp += 1
         if(actualLabels[index] == "spam" and predictedLabels[index] == "ham"):
@@ -342,7 +335,7 @@ def get_spamAccuracy(fileNumbers, actualLabels, predictedLabels):
     fn = 0
     accuracy = 0
 
-    for index in range(0, fileNumbers):
+    for index in range(fileNumbers):
         if(actualLabels[index] == "spam" and actualLabels[index] == predictedLabels[index]):
             tp += 1
         if(actualLabels[index] == "ham" and actualLabels[index] == predictedLabels[index]):
@@ -374,7 +367,7 @@ def spamConfusionParams(fileNumbers, actualLabels, predictedLabels):
     fn = 0
     accuracy = 0
 
-    for index in range(0, fileNumbers):
+    for index in range(fileNumbers):
         if(actualLabels[index] == "spam" and actualLabels[index] == predictedLabels[index]):
             tp += 1
         if(actualLabels[index] == "ham" and actualLabels[index] == predictedLabels[index]):
@@ -395,7 +388,7 @@ def get_hamPrecision(fileNumbers, actualLabels, predictedLabels):
     fp = 0
     precision = 0
 
-    for index in range(0, fileNumbers):
+    for index in range(fileNumbers):
         if(actualLabels[index] == "ham" and actualLabels[index] == predictedLabels[index]):
             tp += 1
         if(actualLabels[index] == "spam" and predictedLabels[index] == "ham"):
@@ -414,7 +407,7 @@ def get_hamRecall(fileNumbers, actualLabels, predictedLabels):
     fn = 0
     recall = 0
 
-    for index in range(0, fileNumbers):
+    for index in range(fileNumbers):
         if(actualLabels[index] == "ham" and actualLabels[index] == predictedLabels[index]):
             tp += 1
         if(actualLabels[index] == "ham" and predictedLabels[index] == "spam"):
@@ -435,7 +428,7 @@ def get_hamAccuracy(fileNumbers, actualLabels, predictedLabels):
     fn = 0
     accuracy = 0
 
-    for index in range(0, fileNumbers):
+    for index in range(fileNumbers):
         if(actualLabels[index] == "ham" and actualLabels[index] == predictedLabels[index]):
             tp += 1
         if(actualLabels[index] == "spam" and actualLabels[index] == predictedLabels[index]):
@@ -467,7 +460,7 @@ def hamConfusionParams(fileNumbers, actualLabels, predictedLabels):
     fn = 0
     accuracy = 0
 
-    for index in range(0, fileNumbers):
+    for index in range(fileNumbers):
         if(actualLabels[index] == "ham" and actualLabels[index] == predictedLabels[index]):
             tp += 1
         if(actualLabels[index] == "spam" and actualLabels[index] == predictedLabels[index]):
@@ -484,9 +477,11 @@ def hamConfusionParams(fileNumbers, actualLabels, predictedLabels):
 
 
 def evaluation_result(spam_accuracy, spam_precision, spam_recall, spam_fmeasure, ham_accuracy, ham_precision, ham_recall, ham_fmeasure):
-    output = ""
+    output = (
+        ""
+        + "################################################################################## \n"
+    )
 
-    output += "################################################################################## \n"
     output += "#                           *** Evaluation Results ***                           # \n"
     output += "#                                                                                # \n"
     output += "#                  Accuracy |     Precission    | Recall |     F1-measure        # \n"
@@ -504,9 +499,11 @@ def evaluation_result(spam_accuracy, spam_precision, spam_recall, spam_fmeasure,
 
 
 def spam_confusionMatrix(tp, tn, fp, fn):
-    output = ""
+    output = (
+        ""
+        + "             ########################################################### \n"
+    )
 
-    output += "             ########################################################### \n"
     output += "             #          *** Confusion Matrix (Spam Class) ***          # \n"
     output += "             #                                                         # \n"
     output += "             #                |    Spam     |     Ham     |            # \n"
@@ -524,9 +521,11 @@ def spam_confusionMatrix(tp, tn, fp, fn):
 
 
 def ham_confusionMatrix(tp, tn, fp, fn):
-    output = ""
+    output = (
+        ""
+        + "             ########################################################### \n"
+    )
 
-    output += "             ########################################################### \n"
     output += "             #          *** Confusion Matrix (Ham Class) ***           # \n"
     output += "             #                                                         # \n"
     output += "             #                |    Spam     |     Ham     |            # \n"
