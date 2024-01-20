@@ -301,9 +301,7 @@ def get_spamPrecision(fileNumbers, actualLabels, predictedLabels):
         if(actualLabels[index] == "ham" and predictedLabels[index] == "spam"):
             fp += 1
 
-    precision = (tp / (tp + fp))
-
-    return precision
+    return (tp / (tp + fp))
 
 
 "*** Calculates Recall (spam class) - Formula: (True Positive / (True Positive + False Negative)) ***"
@@ -315,14 +313,13 @@ def get_spamRecall(fileNumbers, actualLabels, predictedLabels):
     recall = 0
 
     for index in range(fileNumbers):
-        if(actualLabels[index] == "spam" and actualLabels[index] == predictedLabels[index]):
-            tp += 1
-        if(actualLabels[index] == "spam" and predictedLabels[index] == "ham"):
-            fn += 1
+        if actualLabels[index] == "spam":
+            if actualLabels[index] == predictedLabels[index]:
+                tp += 1
+            if predictedLabels[index] == "ham":
+                fn += 1
 
-    recall = (tp / (tp + fn))
-
-    return recall
+    return (tp / (tp + fn))
 
 
 "*** Calculates Accuracy (spam class) - Formula: (TP + TN) / (TP + FP + TN + FN) ***"
@@ -338,16 +335,15 @@ def get_spamAccuracy(fileNumbers, actualLabels, predictedLabels):
     for index in range(fileNumbers):
         if(actualLabels[index] == "spam" and actualLabels[index] == predictedLabels[index]):
             tp += 1
-        if(actualLabels[index] == "ham" and actualLabels[index] == predictedLabels[index]):
-            tn += 1
-        if(actualLabels[index] == "ham" and predictedLabels[index] == "spam"):
-            fp += 1
+        if actualLabels[index] == "ham":
+            if actualLabels[index] == predictedLabels[index]:
+                tn += 1
+            if predictedLabels[index] == "spam":
+                fp += 1
         if(actualLabels[index] == "spam" and predictedLabels[index] == "ham"):
             fn += 1
 
-    accuracy = ((tp + tn) / (tp + tn + fp + fn))
-
-    return accuracy
+    return ((tp + tn) / (tp + tn + fp + fn))
 
 
 """ Calculates F1-measure (spam class) - Formula: 2 * ((precision * recall) / (precision + recall)) """
@@ -394,9 +390,7 @@ def get_hamPrecision(fileNumbers, actualLabels, predictedLabels):
         if(actualLabels[index] == "spam" and predictedLabels[index] == "ham"):
             fp += 1
 
-    precision = (tp / (tp + fp))
-
-    return precision
+    return (tp / (tp + fp))
 
 
 "*** Calculates Recall (ham class) - Formula: (True Positive / (True Positive + False Negative)) ***"
@@ -408,14 +402,13 @@ def get_hamRecall(fileNumbers, actualLabels, predictedLabels):
     recall = 0
 
     for index in range(fileNumbers):
-        if(actualLabels[index] == "ham" and actualLabels[index] == predictedLabels[index]):
-            tp += 1
-        if(actualLabels[index] == "ham" and predictedLabels[index] == "spam"):
-            fn += 1
+        if actualLabels[index] == "ham":
+            if actualLabels[index] == predictedLabels[index]:
+                tp += 1
+            if predictedLabels[index] == "spam":
+                fn += 1
 
-    recall = (tp / (tp + fn))
-
-    return recall
+    return (tp / (tp + fn))
 
 
 "*** Calculates Accuracy (ham class) - Formula: (TP + TN) / (TP + FP + TN + FN) ***"
@@ -431,16 +424,15 @@ def get_hamAccuracy(fileNumbers, actualLabels, predictedLabels):
     for index in range(fileNumbers):
         if(actualLabels[index] == "ham" and actualLabels[index] == predictedLabels[index]):
             tp += 1
-        if(actualLabels[index] == "spam" and actualLabels[index] == predictedLabels[index]):
-            tn += 1
-        if(actualLabels[index] == "spam" and predictedLabels[index] == "ham"):
-            fp += 1
+        if actualLabels[index] == "spam":
+            if actualLabels[index] == predictedLabels[index]:
+                tn += 1
+            if predictedLabels[index] == "ham":
+                fp += 1
         if(actualLabels[index] == "ham" and predictedLabels[index] == "spam"):
             fn += 1
 
-    accuracy = ((tp + tn) / (tp + tn + fp + fn))
-
-    return accuracy
+    return ((tp + tn) / (tp + tn + fp + fn))
 
 
 "*** Calculates F1-measure (ham class) - Formula: 2 * ((precision * recall) / (precision + recall)) ***"
